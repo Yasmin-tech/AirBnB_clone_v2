@@ -2,6 +2,9 @@
 """ Module for testing file storage"""
 import unittest
 from models.base_model import BaseModel
+from models.review import Review
+from models.state import State
+from models.place import Place
 from models import storage
 import os
 
@@ -21,7 +24,7 @@ class test_fileStorage(unittest.TestCase):
         """ Remove storage file at end of tests """
         try:
             os.remove('file.json')
-        except:
+        except FileNotFoundError:
             pass
 
     def test_obj_list_empty(self):
@@ -107,3 +110,49 @@ class test_fileStorage(unittest.TestCase):
         from models.engine.file_storage import FileStorage
         print(type(storage))
         self.assertEqual(type(storage), FileStorage)
+
+    def test_all_with_class(self):
+        """test if all instance of one type is returned"""
+        self.assertEqual(0, len(storage.all(Review)))
+        r1 = Review()
+        r1.comment = "I love it"
+        storage.new(r1)
+        storage.save()
+        self.assertEqual(1, len(storage.all(Review)))
+        r2 = Review()
+        r2.save()
+        self.assertEqual(2, len(storage.all(Review)))
+
+    def test_all_with_none(self):
+        """test the all method with a none argument"""
+        self.assertEqual(0, len(storage.all(Review)))
+        r1 = Review()
+        storage.save()
+        self.assertEqual(1, len(storage.all(Review)))
+        r2 = Review()
+        r2.save()
+        self.assertEqual(2, len(storage.all(Review)))
+
+    def test_delete_obj(self):
+        """confirm if an object is delete from the __objects dict"""
+        self.assertEqual(0, len(storage.all()))
+        s1 = State()
+        storage.save()
+        storage.delete(s1)
+        self.assertEqual(0, len(storage.all()))
+        r2 = Review()
+        r2.save()
+        storage.delete(r2)
+        self.assertEqual(0, len(storage.all()))
+
+    def test_delete_obj_with_none(self):
+        """test the delete method with a none object"""
+        self.assertEqual(0, len(storage.all()))
+        p1 = Place()
+        storage.save()
+        storage.delete()
+        self.assertEqual(1, len(storage.all()))
+        b1 = BaseModel()
+        b1.save()
+        storage.delete()
+        self.assertEqual(2, len(storage.all()))
