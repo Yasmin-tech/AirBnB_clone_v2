@@ -12,7 +12,8 @@ from models import storage
 
 # creation of a State
 state = State(name="California")
-print(state.__dict__)
+#state.name = "isiaq"
+#print(state.__dict__)
 #print(state.to_dict())
 #state2 = State(**state.to_dict())
 #state2.save()

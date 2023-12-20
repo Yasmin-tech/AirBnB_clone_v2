@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
-# from models.state import Base
 from sqlalchemy import Column, String, ForeignKey, Integer, Float, Table
 from sqlalchemy.orm import relationship
 
@@ -24,17 +23,21 @@ class Place(BaseModel, Base):
     reviews = relationship(
             "Review", cascade='all, delete, delete-orphan',
             back_populates="place")
-    place_amenity = Table("place_amenity", Base.metadata,
+    place_amenity = Table(
+            "place_amenity", Base.metadata,
             Column(
-                "place_id", String(60), ForeignKey("places.id"), primary_key=True, nullable=False),
+                "place_id", String(60), ForeignKey("places.id"),
+                primary_key=True, nullable=False),
             Column(
-                "amenity_id", String(60), ForeignKey("amenities.id"), primary_key=True, nullable=False))
-    amenities = relationship("Amenity", secondary="place_amenity", viewonly=False)
+                "amenity_id", String(60), ForeignKey("amenities.id"),
+                primary_key=True, nullable=False)
+            )
+    amenities = relationship(
+            "Amenity", secondary="place_amenity", viewonly=False)
     amenity_ids = []
 
     @property
     def reviews_getter(self):
-
         """return the list of Review instances with place_id equals
             to the current Place.id.
 
@@ -72,4 +75,4 @@ class Place(BaseModel, Base):
         from models.amenity import Amenity
 
         if isinstance(value, Amenity):
-            self.amenity_ids.append(value.id) 
+            self.amenity_ids.append(value.id)

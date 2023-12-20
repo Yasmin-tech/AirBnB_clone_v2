@@ -9,6 +9,7 @@ from models import storage
 import os
 
 
+@unittest.skipIf(os.environ.get("HBNB_TYPE_STORAGE") == "db", "skip if it's for DBStorage")
 class test_fileStorage(unittest.TestCase):
     """ Class to test the file storage method """
 
@@ -34,6 +35,7 @@ class test_fileStorage(unittest.TestCase):
     def test_new(self):
         """ New object is correctly added to __objects """
         new = BaseModel()
+        storage.new(new)
         for obj in storage.all().values():
             temp = obj
         self.assertTrue(temp is obj)
@@ -66,7 +68,7 @@ class test_fileStorage(unittest.TestCase):
     def test_reload(self):
         """ Storage file is successfully loaded to __objects """
         new = BaseModel()
-        storage.save()
+        new.save()
         storage.reload()
         for obj in storage.all().values():
             loaded = obj
@@ -100,6 +102,7 @@ class test_fileStorage(unittest.TestCase):
     def test_key_format(self):
         """ Key is properly formatted """
         new = BaseModel()
+        storage.new(new)
         _id = new.to_dict()['id']
         for key in storage.all().keys():
             temp = key
@@ -127,7 +130,7 @@ class test_fileStorage(unittest.TestCase):
         """test the all method with a none argument"""
         self.assertEqual(0, len(storage.all(Review)))
         r1 = Review()
-        storage.save()
+        r1.save()
         self.assertEqual(1, len(storage.all(Review)))
         r2 = Review()
         r2.save()
@@ -149,7 +152,7 @@ class test_fileStorage(unittest.TestCase):
         """test the delete method with a none object"""
         self.assertEqual(0, len(storage.all()))
         p1 = Place()
-        storage.save()
+        p1.save()
         storage.delete()
         self.assertEqual(1, len(storage.all()))
         b1 = BaseModel()

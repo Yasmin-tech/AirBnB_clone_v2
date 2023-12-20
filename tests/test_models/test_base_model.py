@@ -7,7 +7,7 @@ from uuid import UUID
 import json
 import os
 
-
+@unittest.skipIf(os.environ.get("HBNB_TYPE_STORAGE") == "db", "skip if it's for DBStorage")
 class test_basemodel(unittest.TestCase):
     """ """
 
