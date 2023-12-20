@@ -5,8 +5,9 @@ from datetime import datetime
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
-
 Base = declarative_base()
+
+
 class BaseModel:
     """A base class for all hbnb models"""
     id = Column(String(60), nullable=False, unique=True, primary_key=True)
@@ -22,11 +23,16 @@ class BaseModel:
             self.updated_at = datetime.now()
             # storage.new(self)
         else:
-            kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
+            if kwargs.get("updated_at"):
+                kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
                                                      '%Y-%m-%dT%H:%M:%S.%f')
-            kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
+            if kwargs.get("created_at"):
+                kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
                                                      '%Y-%m-%dT%H:%M:%S.%f')
-            del kwargs['__class__']
+            if kwargs.get("__class__"):
+                del kwargs['__class__']
+            if not kwargs.get("id"):
+                self.id = str(uuid.uuid4())
             self.__dict__.update(kwargs)
 
     def __str__(self):
@@ -46,6 +52,7 @@ class BaseModel:
 
     def to_dict(self):
         """Convert instance into dict format"""
+        # print(self.__dict__)
         dictionary = {}
         dictionary.update(self.__dict__)
         dictionary.update({'__class__':
@@ -58,5 +65,4 @@ class BaseModel:
 
     def delete(self):
         """to delete the current instance from the storage"""
-        from models import storage
         storage.delete()
