@@ -78,7 +78,7 @@ class Place(BaseModel, Base):
             """
             from models.amenity import Amenity
 
-            if isinstance(value, Amenity):
+            if isinstance(value, Amenity) and value.id not in self.amenity_ids:
                 self.amenity_ids.append(value.id)
     else:
         amenities = relationship(
