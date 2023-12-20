@@ -21,9 +21,9 @@ class Place(BaseModel, Base):
     longitude = Column(Float, nullable=True)
     user = relationship("User", back_populates="places")
     cities = relationship("City", back_populates="places")
-    reviews = relationship(
-            "Review", cascade='all, delete, delete-orphan',
-            back_populates="place")
+    # reviews = relationship(
+    #         "Review", cascade='all, delete, delete-orphan',
+    #         back_populates="place")
     place_amenity = Table(
             "place_amenity", Base.metadata,
             Column(
@@ -37,24 +37,25 @@ class Place(BaseModel, Base):
     #         "Amenity", secondary="place_amenity", viewonly=False)
     amenity_ids = []
 
-    @property
-    def reviews_getter(self):
-        """return the list of Review instances with place_id equals
-            to the current Place.id.
-
-            Note: this will be a FileStorage relationship between
-            Place and Review
-        """
-        from model.review import Review
-        from model import storage
-
-        place_id = self.id
-        review_list = []
-        for value in storage.all(Review).values():
-            if value.place_id == place_id:
-                review_list.append(value)
-        return review_list
     if os.getenv("HBNB_TYPE_STORAGE") != "db":
+        @property
+        def reviews(self):
+            """return the list of Review instances with place_id equals
+                to the current Place.id.
+
+                Note: this will be a FileStorage relationship between
+                Place and Review
+            """
+            from model.review import Review
+            from model import storage
+
+            place_id = self.id
+            review_list = []
+            for value in storage.all(Review).values():
+                if value.place_id == place_id:
+                    review_list.append(value)
+            return review_list
+
         @property
         def amenities(self):
             """returns the list of Amenity instances based on the attribute
@@ -69,7 +70,7 @@ class Place(BaseModel, Base):
             return amenity_list
 
         @amenities.setter
-        def amenities_s(self, value):
+        def amenities(self, value):
             """Setter attribute amenities that handles append method
                 for adding an Amenity.id to the attribute amenity_ids
 
@@ -78,8 +79,11 @@ class Place(BaseModel, Base):
             """
             from models.amenity import Amenity
 
-            if isinstance(value, Amenity) and value.id not in self.amenity_ids:
+            if isinstance(value, Amenity):
                 self.amenity_ids.append(value.id)
     else:
         amenities = relationship(
             "Amenity", secondary="place_amenity", viewonly=False)
+        reviews = relationship(
+            "Review", cascade='all, delete, delete-orphan',
+            back_populates="place")
