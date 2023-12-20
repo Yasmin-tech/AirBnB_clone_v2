@@ -55,7 +55,7 @@ class Place(BaseModel, Base):
         return review_list
 
     @property
-    def amenities(self):
+    def amenities_getter(self):
         """returns the list of Amenity instances based on the attribute
             amenity_ids that contains all Amenity.id linked to the Place
         """
@@ -65,8 +65,7 @@ class Place(BaseModel, Base):
                 amenity_list.append(value)
         return amenity_list
 
-    @amenities.setter
-    def amenities(self, value):
+    def amenities_s(self, value):
         """Setter attribute amenities that handles append method
             for adding an Amenity.id to the attribute amenity_ids
 
