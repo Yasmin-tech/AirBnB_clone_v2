@@ -3,6 +3,7 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, ForeignKey, Integer, Float, Table
 from sqlalchemy.orm import relationship
+import os
 
 
 class Place(BaseModel, Base):
@@ -57,7 +58,7 @@ class Place(BaseModel, Base):
     @property
     def amenities_getter(self):
         """returns the list of Amenity instances based on the attribute
-            amenity_ids that contains all Amenity.id linked to the Place
+        amenity_ids that contains all Amenity.id linked to the Place
         """
         amenity_list = []
         for value in storage.all(Amentity).values():
