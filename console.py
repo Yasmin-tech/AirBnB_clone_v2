@@ -127,8 +127,8 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
+        all_args = args.split(" ")
         """ Create an object of any class"""
-        all_args = args.split(' ')
         if not all_args[0]:
             print("** class name missing **")
             return
@@ -136,35 +136,27 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
         new_instance = HBNBCommand.classes[all_args[0]]()
-        i = 1
-        big_dict = {}
-        # regex pattern to match a string attribute
-        s_patrn = re.compile(r'(\w+)="([-\w"?]*)"')
-        # regex pattern to match a float attribute
-        f_patrn = re.compile(r'(\w+)=(-?[0-9]+\.[0-9]+)')
-        # regex pattern to match an int attribute
-        i_patrn = re.compile(r'(\w+)=(-?[0-9]+)')
-        while (i < len(all_args)):
-            string_regex = s_patrn.search(all_args[i])
-            float_regex = f_patrn.search(all_args[i])
-            number_regex = i_patrn.search(all_args[i])
-            if string_regex:
-                key, value = string_regex.group().split('=')
-                big_dict[key] = escapeBackslash(
-                        value.strip('"').replace('_', ' '))
-            elif float_regex:
-                key, value = float_regex.group().split('=')
-                big_dict[key] = float(value)
-            elif number_regex:
-                key, value = number_regex.group().split('=')
-                big_dict[key] = int(value)
-            i += 1
-        # setting all valid attribute to the new instance
-        for k, val in big_dict.items():
-            setattr(new_instance, k, val)
-        # storage.save()
+        attr_dict = {}
+        idx = 1
+        while (idx < len(all_args)):
+            string_key = re.search(r'(\w+)="([".\w\-@,\'?]*)"', all_args[idx])
+            float_key = re.search(r'(\w+)=(-?[0-9]+\.[0-9]+)', all_args[idx])
+            number_key = re.search(r'(\w+)=(-?[0-9]+)', all_args[idx])
+
+            if string_key:
+                k = string_key.group(1)
+                v = escapeBackslash(string_key.group(2).replace("_", " "))
+                attr_dict[k] = v
+            elif float_key:
+                k, v = float_key.group(1), float_key.group(2)
+                attr_dict[k] = v
+            elif number_key:
+                k, v = number_key.group(1), number_key.group(2)
+                attr_dict[k] = v
+            idx += 1
+        for k, v in attr_dict.items():
+            setattr(new_instance, k, v)
         new_instance.save()
-        storage.save()
         print(new_instance.id)
 
     def help_create(self):
@@ -196,8 +188,7 @@ class HBNBCommand(cmd.Cmd):
 
         key = c_name + "." + c_id
         try:
-            # print(storage._FileStorage__objects[key])
-            print(storage.all()[key])
+            print(storage._FileStorage__objects[key])
         except KeyError:
             print("** no instance found **")
 
@@ -229,7 +220,7 @@ class HBNBCommand(cmd.Cmd):
         key = c_name + "." + c_id
 
         try:
-            del(storage.all()[key])
+            del (storage.all()[key])
             storage.save()
         except KeyError:
             print("** no instance found **")
@@ -249,9 +240,8 @@ class HBNBCommand(cmd.Cmd):
                 print("** class doesn't exist **")
                 return
             # for k, v in storage._FileStorage__objects.items():
-            # for k, v in storage.all().items():
+            #     if k.split('.')[0] == args:
             for k, v in storage.all(eval(args)).items():
-                # if k.split('.')[0] == args:
                 print_list.append(str(v))
         else:
             # for k, v in storage._FileStorage__objects.items():
