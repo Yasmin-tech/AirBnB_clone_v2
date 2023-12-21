@@ -21,9 +21,9 @@ class Place(BaseModel, Base):
     longitude = Column(Float, nullable=True)
     user = relationship("User", back_populates="places")
     cities = relationship("City", back_populates="places")
-    # reviews = relationship(
-    #         "Review", cascade='all, delete, delete-orphan',
-    #         back_populates="place")
+    reviews = relationship(
+            "Review", cascade='all, delete, delete-orphan',
+            back_populates="place")
     place_amenity = Table(
             "place_amenity", Base.metadata,
             Column(
@@ -33,57 +33,57 @@ class Place(BaseModel, Base):
                 "amenity_id", String(60), ForeignKey("amenities.id"),
                 primary_key=True, nullable=False)
             )
-    # amenities = relationship(
-    #         "Amenity", secondary="place_amenity", viewonly=False)
+    amenities = relationship(
+            "Amenity", secondary="place_amenity", viewonly=False)
     amenity_ids = []
 
-    if os.getenv("HBNB_TYPE_STORAGE") != "db":
-        @property
-        def reviews(self):
-            """return the list of Review instances with place_id equals
-                to the current Place.id.
+    # if os.getenv("HBNB_TYPE_STORAGE") != "db":
+    @property
+    def reviews_attr(self):
+        """return the list of Review instances with place_id equals
+            to the current Place.id.
 
-                Note: this will be a FileStorage relationship between
-                Place and Review
-            """
-            from model.review import Review
-            from model import storage
+            Note: this will be a FileStorage relationship between
+            Place and Review
+        """
+        from models.review import Review
+        from models import storage
 
-            place_id = self.id
-            review_list = []
-            for value in storage.all(Review).values():
-                if value.place_id == place_id:
-                    review_list.append(value)
-            return review_list
+        place_id = self.id
+        review_list = []
+        for value in storage.all(Review).values():
+            if value.place_id == place_id:
+                review_list.append(value)
+        return review_list
 
-        @property
-        def amenities(self):
-            """returns the list of Amenity instances based on the attribute
-            amenity_ids that contains all Amenity.id linked to the Place
-            """
-            from models import storage
-            from models.amenity import Amenity
-            amenity_list = []
-            for value in storage.all(Amenity).values():
-                if value.id in self.amenity_ids:
-                    amenity_list.append(value)
-            return amenity_list
+    @property
+    def amenities_attr(self):
+        """returns the list of Amenity instances based on the attribute
+        amenity_ids that contains all Amenity.id linked to the Place
+        """
+        from models import storage
+        from models.amenity import Amenity
+        amenity_list = []
+        for value in storage.all(Amenity).values():
+            if value.id in self.amenity_ids:
+                amenity_list.append(value)
+        return amenity_list
 
-        @amenities.setter
-        def amenities(self, value):
-            """Setter attribute amenities that handles append method
-                for adding an Amenity.id to the attribute amenity_ids
+    # @amenities.setter
+    def amenities_stter(self, value):
+        """Setter attribute amenities that handles append method
+            for adding an Amenity.id to the attribute amenity_ids
 
-                Note: This method should accept only Amenity object,
-                otherwise, do nothing.
-            """
-            from models.amenity import Amenity
+            Note: This method should accept only Amenity object,
+            otherwise, do nothing.
+        """
+        from models.amenity import Amenity
 
-            if isinstance(value, Amenity):
-                self.amenity_ids.append(value.id)
-    else:
-        amenities = relationship(
-            "Amenity", secondary="place_amenity", viewonly=False)
-        reviews = relationship(
-            "Review", cascade='all, delete, delete-orphan',
-            back_populates="place")
+        if isinstance(value, Amenity):
+            self.amenity_ids.append(value.id)
+    # else:
+    #     amenities = relationship(
+    #         "Amenity", secondary="place_amenity", viewonly=False)
+    #     reviews = relationship(
+    #         "Review", cascade='all, delete, delete-orphan',
+    #         back_populates="place")
