@@ -37,16 +37,17 @@ class Place(BaseModel, Base):
             "Amenity", secondary="place_amenity", viewonly=False)
     amenity_ids = []
 
+    # if os.getenv("HBNB_TYPE_STORAGE") != "db":
     @property
-    def reviews_getter(self):
+    def reviews_attr(self):
         """return the list of Review instances with place_id equals
             to the current Place.id.
 
             Note: this will be a FileStorage relationship between
             Place and Review
         """
-        from model.review import Review
-        from model import storage
+        from models.review import Review
+        from models import storage
 
         place_id = self.id
         review_list = []
@@ -56,17 +57,20 @@ class Place(BaseModel, Base):
         return review_list
 
     @property
-    def amenities_getter(self):
+    def amenities_attr(self):
         """returns the list of Amenity instances based on the attribute
         amenity_ids that contains all Amenity.id linked to the Place
         """
+        from models import storage
+        from models.amenity import Amenity
         amenity_list = []
-        for value in storage.all(Amentity).values():
+        for value in storage.all(Amenity).values():
             if value.id in self.amenity_ids:
                 amenity_list.append(value)
         return amenity_list
 
-    def amenities_s(self, value):
+    # @amenities.setter
+    def amenities_stter(self, value):
         """Setter attribute amenities that handles append method
             for adding an Amenity.id to the attribute amenity_ids
 
@@ -77,3 +81,9 @@ class Place(BaseModel, Base):
 
         if isinstance(value, Amenity):
             self.amenity_ids.append(value.id)
+    # else:
+    #     amenities = relationship(
+    #         "Amenity", secondary="place_amenity", viewonly=False)
+    #     reviews = relationship(
+    #         "Review", cascade='all, delete, delete-orphan',
+    #         back_populates="place")

@@ -73,4 +73,5 @@ class BaseModel:
 
     def delete(self):
         """to delete the current instance from the storage"""
+        from models import storage
         storage.delete()
