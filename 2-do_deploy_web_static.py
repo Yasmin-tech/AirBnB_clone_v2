@@ -51,6 +51,6 @@ def do_deploy(archive_path):
         cmd = symb_link.format(arch_filename)
         run(cmd)
         print('New version deployed!')
-        return True
     except Exception:
         return False
+    return True
