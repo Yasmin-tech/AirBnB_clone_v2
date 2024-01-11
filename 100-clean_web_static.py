@@ -7,6 +7,7 @@
 from fabric.api import *
 import datetime
 import os
+from io import StringIO
 
 env.user = "ubuntu"
 env.hosts = ['100.25.205.228', '100.25.211.79']
@@ -63,20 +64,38 @@ def deploy():
     return result
 
 
+def capture_output(command):
+    """capture the standard output using either run or local"""
+    from unittest.mock import patch
+
+    with patch('sys.stdout', new=StringIO()) as f:
+        local(command)
+        print(f.readlines())
+        return f.readlines()
+
 def do_clean(number=0):
     """delete out-of-date archives"""
-    one_version = local(
-            "ls -lt versions | grep web_static_ | tail -n 2 | awk '{print $NF}'").split(
-                    "\n")
-    two_version = local(
-            "ls -lt versions | grep web_static_ | tail -n 3 | awk '{print $NF}'").split(
-                    "\n")
-    one_remote = run(
-            "ls -lt /data/web_static/releases | grep web_static_ | tail -n 2 | awk '{print $NF}'").split(
-                     "\n")
-    two_remote = run(
-            "ls -lt /data/web_static/releases | grep web_static_ | tail -n 3 | awk '{print $NF}'").split(
-                     "\n")
+    """
+    with capture():
+        one_version = local(
+                "ls -lt versions | grep web_static_ | tail -n 2 | awk '{print $NF}' > /dev/null 2>&1").split(
+                        "\n")
+        two_version = local(
+                "ls -lt versions | grep web_static_ | tail -n 3 | awk '{print $NF}' > /dev/null 2>&1").split(
+                        "\n")
+        one_remote = run(
+                "ls -lt /data/web_static/releases | grep web_static_ | tail -n 2 | awk '{print $NF}'").split(
+                        "\n")
+        two_remote = run(
+                "ls -lt /data/web_static/releases | grep web_static_ | tail -n 3 | awk '{print $NF}'").split(
+                        "\n")"""
+    command1 = "ls -lt versions | grep web_static_ | tail -n 2 | awk '{print $NF}'"
+    one_version = capture_output(command1)
+    command2 = "ls -lt versions | grep web_static_ | tail -n 3 | awk '{print $NF}'"
+    two_version = capture_output(command2)
+    print(one_version)
+    print(two_version)
+    """
     if number == 0 or number == 1:
         with cd("versions"):
             for archive in one_version:
@@ -91,3 +110,4 @@ def do_clean(number=0):
         with cd("/data/web_static/releases"):
             for archive in two_remote:
                 run(f'rm -rf {archive}')
+        """
