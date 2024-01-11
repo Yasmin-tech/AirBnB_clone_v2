@@ -30,6 +30,7 @@ def do_pack():
     local(f'tar -czvf versions/{archv_name} web_static/')
     return f'versions/{archv_name}'
 
+
 def do_deploy(archive_path):
     """uncompress an archive file into a remote server directory
     """
@@ -51,6 +52,7 @@ def do_deploy(archive_path):
     print('New version deployed!')
     return True
 
+
 def deploy():
     """full deployment, i.e, the combination of do_pack and do_deploy
     """
@@ -60,7 +62,32 @@ def deploy():
     result = do_deploy(archive_path)
     return result
 
+
 def do_clean(number=0):
     """delete out-of-date archives"""
+    one_version = local(
+            "ls -lt versions | grep web_static_ | tail -n 2 | awk '{print $NF}'").split(
+                    "\n")
+    two_version = local(
+            "ls -lt versions | grep web_static_ | tail -n 3 | awk '{print $NF}'").split(
+                    "\n")
+    one_remote = run(
+            "ls -lt /data/web_static/releases | grep web_static_ | tail -n 2 | awk '{print $NF}'").split(
+                     "\n")
+    two_remote = run(
+            "ls -lt /data/web_static/releases | grep web_static_ | tail -n 3 | awk '{print $NF}'").split(
+                     "\n")
     if number == 0 or number == 1:
-
+        with cd("versions"):
+            for archive in one_version:
+                local(f'rm -rf {archive}')
+        with cd("/data/web_static/releases"):
+            for archive in one_remote:
+                run(f'rm -rf {archive}')
+    elif number == 2:
+        with cd("versions"):
+            for archive in two_version:
+                local(f'rm -rf {archive}')
+        with cd("/data/web_static/releases"):
+            for archive in two_remote:
+                run(f'rm -rf {archive}')
