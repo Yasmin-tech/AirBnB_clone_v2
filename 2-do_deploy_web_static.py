@@ -6,7 +6,7 @@
 
 from fabric.api import *
 import datetime
-import os
+# import os
 
 env.user = "ubuntu"
 env.hosts = ['100.25.205.228', '100.25.211.79']
@@ -31,10 +31,17 @@ def do_pack():
     return f'versions/{archv_name}'
 
 
+def check_file_exists(file_path):
+    result = local(f'test -e {file_path} && echo "exists" || echo "not exist"')
+    return result
+
+
 def do_deploy(archive_path):
     """uncompress an archive file into a remote server directory
     """
-    if not os.path.exists(archive_path):
+
+    result = check_file_exists(archive_path)
+    if result != "exists":
         return False
 
     put(archive_path, "/tmp/")
