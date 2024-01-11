@@ -4,7 +4,7 @@
     your web servers, using the function do_deploy.
     """
 
-from fabric.api import run, put
+from fabric.api import run, put, env
 import datetime
 import os
 
