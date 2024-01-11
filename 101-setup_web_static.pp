@@ -2,12 +2,12 @@
 
 #ensure nginx is installed
 package { 'nginx':
-  ensure	=> installed,
+  ensure  => installed,
 }
 
 # ensure that the following directories exists
 file { '/data/':
-  ensure	=> 'directory',
+  ensure  => 'directory',
 }
 file { '/data/web_static/':
   ensure        => 'directory',
@@ -24,21 +24,21 @@ file { '/data/web_static/releases/test/':
 
 # create a fake html file with a little content
 file { '/data/web_static/releases/test/index.html':
-  ensure        => present,
-  content	=> 'Holberton School',
+  ensure  => present,
+  content => 'Holberton School',
 }
 
 # create a symbolic link
 file { '/data/web_static/current':
-  ensure	=> 'link',
-  target	=> '/data/web_static/releases/test/',
+  ensure => 'link',
+  target => '/data/web_static/releases/test/',
 }
 
 # change owner and group of a directory to ubuntu
 file { '/data/':
-  ensure	=> 'directory',
-  owner		=> 'ubuntu',
-  group		=> 'ubuntu',
+  ensure => 'directory',
+  owner  => 'ubuntu',
+  group  => 'ubuntu',
 }
 
 # Save the content of the server block in a variable
@@ -58,13 +58,13 @@ $serverblock="server {
 
 # configure the server block to serve the content of /data/web_static/current/ to hbnb_static
 file { '/etc/nginx/sites-available/default':
-  ensure	=> present,
-  content	=> $serverblock
+  ensure  => present,
+  content => $serverblock
 }
 
 # Restart the nginx server
 service { 'nginx':
-  ensure => running,
-  enable => true,
+  ensure  => running,
+  enable  => true,
   require => File['/etc/nginx/sites-available/default'],
 }
