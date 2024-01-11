@@ -10,6 +10,7 @@ import os
 
 env.user = "ubuntu"
 env.hosts = ['100.25.205.228', '100.25.211.79']
+path_to_archive = None
 
 
 def do_pack():
@@ -56,8 +57,10 @@ def do_deploy(archive_path):
 def deploy():
     """full deployment, i.e, the combination of do_pack and do_deploy
     """
-    archive_path = do_pack()
-    if not archive_path:
-        return False
-    result = do_deploy(archive_path)
+    global path_to_archive
+    if path_to_archive is None:
+        path_to_archive = do_pack()
+        if not path_to_archive:
+            return False
+    result = do_deploy(path_to_archive)
     return result
