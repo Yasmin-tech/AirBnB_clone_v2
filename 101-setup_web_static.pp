@@ -8,6 +8,8 @@ package { 'nginx':
 # ensure that the following directories exists
 file { '/data/':
   ensure  => 'directory',
+  owner	  => 'ubuntu',
+  group	  => 'ubuntu',
 }
 file { '/data/web_static/':
   ensure        => 'directory',
@@ -32,13 +34,6 @@ file { '/data/web_static/releases/test/index.html':
 file { '/data/web_static/current':
   ensure => 'link',
   target => '/data/web_static/releases/test/',
-}
-
-# change owner and group of a directory to ubuntu
-file { '/data/':
-  ensure => 'directory',
-  owner  => 'ubuntu',
-  group  => 'ubuntu',
 }
 
 # Save the content of the server block in a variable
