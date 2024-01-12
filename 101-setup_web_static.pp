@@ -10,31 +10,26 @@ file { '/data/':
   ensure => 'directory',
   owner  => 'ubuntu',
   group  => 'ubuntu',
-  mode   => '0755',
 }
 file { '/data/web_static/':
   ensure => 'directory',
   owner  => 'ubuntu',
   group  => 'ubuntu'
-  mode   => '0755',
 }
 file { '/data/web_static/releases/':
   ensure => 'directory',
   owner  => 'ubuntu',
   group  => 'ubuntu',
-  mode   => '0755',
 }
 file { '/data/web_static/shared/':
   ensure => 'directory',
   owner  => 'ubuntu',
   group  => 'ubuntu',
-  mode   => '0755',
 }
 file { '/data/web_static/releases/test/':
   ensure => 'directory',
   owner  => 'ubuntu',
   group  => 'ubuntu',
-  mode   => '0755',
 }
 
 # create a fake html file with a little content
