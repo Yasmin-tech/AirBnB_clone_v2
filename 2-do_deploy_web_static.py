@@ -45,7 +45,7 @@ def do_deploy(archive_path):
     cmd = 'tar -xzf {} -C /data/web_static/releases/{} --strip-components=1'
     run(cmd.format(arch_path, arch_filename))
     run(f'rm {arch_path}')
-    run('rm /data/web_static/current')
+    run('rm -f /data/web_static/current')
     symb_link = 'ln -s /data/web_static/releases/{} /data/web_static/current'
     cmd = symb_link.format(arch_filename)
     run(cmd)

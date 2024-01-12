@@ -7,21 +7,34 @@ package { 'nginx':
 
 # ensure that the following directories exists
 file { '/data/':
-  ensure  => 'directory',
-  owner	  => 'ubuntu',
-  group	  => 'ubuntu',
+  ensure => 'directory',
+  owner  => 'ubuntu',
+  group  => 'ubuntu',
+  mode   => '0755',
 }
 file { '/data/web_static/':
-  ensure        => 'directory',
+  ensure => 'directory',
+  owner  => 'ubuntu',
+  group  => 'ubuntu'
+  mode   => '0755',
 }
 file { '/data/web_static/releases/':
-  ensure        => 'directory',
+  ensure => 'directory',
+  owner  => 'ubuntu',
+  group  => 'ubuntu',
+  mode   => '0755',
 }
 file { '/data/web_static/shared/':
-  ensure        => 'directory',
+  ensure => 'directory',
+  owner  => 'ubuntu',
+  group  => 'ubuntu',
+  mode   => '0755',
 }
 file { '/data/web_static/releases/test/':
-  ensure        => 'directory',
+  ensure => 'directory',
+  owner  => 'ubuntu',
+  group  => 'ubuntu',
+  mode   => '0755',
 }
 
 # create a fake html file with a little content
