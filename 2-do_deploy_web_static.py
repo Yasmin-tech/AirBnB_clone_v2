@@ -46,8 +46,7 @@ def do_deploy(archive_path):
     run(cmd.format(arch_path, arch_filename))
     run(f'rm {arch_path}')
     run('rm -f /data/web_static/current')
-    symb_link = 'ln -s /data/web_static/releases/{} /data/web_static/current'
-    cmd = symb_link.format(arch_filename)
-    run(cmd)
+    s = f'ln -s /data/web_static/releases/{arch_filename} /data/web_static/current'
+    run(s)
     print('New version deployed!')
     return True
