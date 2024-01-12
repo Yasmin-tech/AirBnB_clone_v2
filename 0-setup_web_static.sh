@@ -36,16 +36,22 @@ ln -s "/data/web_static/releases/test/" "/data/web_static/current"
 # Give the user and group ownership of /data/ to ubuntu recursively
 chown -R ubuntu:ubuntu /data/
 
+mkdir -p /var/www/html
+chmod 755 /var/www/html
+echo "Holberton School" > /var/www/html/index.html
+
+the_hostname=$(hostname)
 # Configure the server block
 cat <<EOF > /etc/nginx/sites-available/default
 server {
         listen 80;
         listen [::]:80;
 
-        root /data/web_static/;
-        index index.html index.htm index.nginx-debian.html;
+        root /var/www/html;
+        index index.html index.htm;
 
         server_name agroelectronics.tech;
+	add_header X-Served-By $the_hostname;
 
 	location /hbnb_static {
 		#location of the the html content to serve
