@@ -57,10 +57,12 @@ SERVER_confg=\
     location / {
         root /var/www/html;
         index index.html;
+        add_header X-Served-By $HOSTNAME;
     }
     location /hbnb_static {
         alias /data/web_static/current/;
         index index.html;
+        add_header X-Served-By $HOSTNAME;
     }
 }"
 echo -e "$SERVER_confg" > /etc/nginx/sites-available/default
