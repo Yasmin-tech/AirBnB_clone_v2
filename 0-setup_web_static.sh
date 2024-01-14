@@ -44,8 +44,8 @@ if [ -L "$link" ]; then
     rm "$link"
 fi
 ln -s "$dir3" "$link"
-chown -R ubuntu:ubuntu "$link"
-
+chown -R ubuntu /data/
+chgrp -R ubuntu /data/
 
 echo "Hello World!" > /var/www/html/index.html
 SERVER_confg=\
