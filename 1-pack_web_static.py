@@ -12,12 +12,13 @@ def do_pack():
     """ A function that generates .tgz file using Fabric """
     # local("mkdir -p ")
     # local("tar -czvf ")
-    time_now = datetime.now().strftime("%Y%m%d%H%M")
+    time_now = datetime.now().strftime("%Y%m%d%H%M%S")
     archived_name = "web_static_" + time_now + ".tgz"
     dir_save = "versions/" + archived_name
 
-    if not os.path.isdir("versions"):
-        local("mkdir versions", capture=True)
+    if os.path.isdir("versions") is False:
+        if local("mkdir -p versions").failed is True:
+            return None
     print("Packing web_static to {}".format(dir_save))
     result = local("tar czvf {} web_static".format(dir_save))
 
