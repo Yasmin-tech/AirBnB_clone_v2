@@ -7,6 +7,10 @@ from fabric.api import local, put, run, env
 import os
 from datetime import datetime
 
+env.hosts = ['ubuntu@100.25.151.250', 'ubuntu@35.174.211.176']
+env.sudo_user = "root"
+env.sudo_password = "12345sw48o"
+
 
 def do_pack():
     """ A function that generates .tgz file using Fabric """
@@ -28,11 +32,6 @@ def do_pack():
         print("web_static packed: {} -> {}Bytes".format(
             dir_save, os.path.getsize(dir_save)))
         return dir_save
-
-
-env.hosts = ['ubuntu@100.25.151.250', 'ubuntu@35.174.211.176']
-env.sudo_user = "root"
-env.sudo_password = "12345sw48o"
 
 
 def do_deploy(archive_path):
