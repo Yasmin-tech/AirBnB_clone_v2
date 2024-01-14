@@ -1,65 +1,90 @@
 #!/usr/bin/python3
-"""This module contains a Fabric script (based on the file
-    1-pack_web_static.py) that distributes an archive to
-    your web servers, using the function do_deploy.
-    """
+""" a Fabric script that creates and distributes an archive to my web servers,
+    using the function deploy"""
 
-from fabric.api import *
-import datetime
+
+from fabric.api import local, put, run, env
 import os
-
-env.user = "ubuntu"
-env.hosts = ['100.25.205.228', '100.25.211.79']
-path_to_archive = None
+from datetime import datetime
 
 
 def do_pack():
-    """ Create a archive from the content of a directory
-        and return the path to the archive
-    """
-    NOW = datetime.datetime.now()
-    y = NOW.year
-    mon = NOW.month
-    d = NOW.day
-    hr = NOW.hour
-    m = NOW.minute
-    sec = NOW.second
+    """ A function that generates .tgz file using Fabric """
+    # local("mkdir -p ")
+    # local("tar -czvf ")
+    time_now = datetime.now().strftime("%Y%m%d%H%M%S")
+    archived_name = "web_static_" + time_now + ".tgz"
+    dir_save = "versions/" + archived_name
 
-    archv_name = 'web_static_{:02d}{:02d}{:02d}{:02d}{:02d}{:02d}.tgz'.format(
-            y, mon, d, hr, m, sec)
-    local('mkdir -p versions')
-    local(f'tar -czvf versions/{archv_name} web_static/')
-    return f'versions/{archv_name}'
+    if os.path.isdir("versions") is False:
+        if local("mkdir -p versions").failed is True:
+            return None
+    print("Packing web_static to {}".format(dir_save))
+    result = local("tar czvf {} web_static".format(dir_save))
+
+    if result.failed:
+        return None
+    else:
+        print("web_static packed: {} -> {}Bytes".format(
+            dir_save, os.path.getsize(dir_save)))
+        return dir_save
+
+
+env.hosts = ['ubuntu@100.25.151.250', 'ubuntu@35.174.211.176']
+env.sudo_user = "root"
+env.sudo_password = "12345sw48o"
 
 
 def do_deploy(archive_path):
-    """uncompress an archive file into a remote server directory
-    """
-    if not os.path.exists(archive_path):
+    """ the function that will run remotly ont the servers
+        to deploy the archived files """
+    if os.path.isfile(archive_path) is False:
         return False
-    put(archive_path, "/tmp/")
-    archive_name = os.path.basename(archive_path)
-    arch_filename = os.path.splitext(archive_name)[0]
-    arch_path = f'/tmp/{archive_name}'
-    run(f'mkdir -p /data/web_static/releases/{arch_filename}')
-    cmd = 'tar -xzf {} -C /data/web_static/releases/{} --strip-components=1'
-    run(cmd.format(arch_path, arch_filename))
-    run(f'rm {arch_path}')
-    run('rm /data/web_static/current')
-    symb_link = 'ln -s /data/web_static/releases/{} /data/web_static/current'
-    cmd = symb_link.format(arch_filename)
-    run(cmd)
-    print('New version deployed!')
+
+    if put(archive_path, remote_path="/tmp/").failed is True:
+        return False
+
+    paths = archive_path.split("/")
+    # the file without .tgz
+    paths = paths[-1].split(".")
+
+    file_to_uncompress = "/tmp/" + paths[0] + ".tgz"
+    if run("sudo mkdir -p /data/web_static/releases/{}/".format(
+            paths[0])).failed is True:
+        return False
+
+    new_dir = "/data/web_static/releases/{}/".format(paths[0])
+    if run("sudo tar -xzf {} -C {}".format(
+            file_to_uncompress, new_dir)).failed is True:
+        return False
+
+    if run("sudo rm {}".format(file_to_uncompress)).failed is True:
+        return False
+
+    if run("sudo mv {}web_static/* {}".format(
+            new_dir, new_dir)).failed is True:
+        return False
+
+    if run("sudo rm -rf {}web_static".format(new_dir)).failed is True:
+        return False
+
+    if run("sudo rm -rf /data/web_static/current").failed is True:
+        return False
+
+    if run("sudo ln -s {} /data/web_static/current".format(
+            new_dir)).failed is True:
+        return False
+
+    print("New version deployed!")
+
     return True
 
 
 def deploy():
-    """full deployment, i.e, the combination of do_pack and do_deploy
-    """
-    global path_to_archive
-    if path_to_archive is None:
-        path_to_archive = do_pack()
-        if not path_to_archive:
-            return False
-    result = do_deploy(path_to_archive)
-    return result
+    """" create the archive file from web_static by calling do_pack
+            deployto to the remote servers using do_deploy"""
+
+    file = do_pack()
+    if file is None:
+        return False
+    return do_deploy(file)
