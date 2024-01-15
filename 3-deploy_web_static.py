@@ -10,6 +10,8 @@ from datetime import datetime
 env.hosts = ['ubuntu@100.25.151.250', 'ubuntu@35.174.211.176']
 env.sudo_user = "root"
 env.sudo_password = "12345sw48o"
+flag = False
+file = ""
 
 
 def do_pack():
@@ -83,7 +85,11 @@ def deploy():
     """" create the archive file from web_static by calling do_pack
             deployto to the remote servers using do_deploy"""
 
-    file = do_pack()
+    global flag
+    global file
+    if not flag:
+        file = do_pack()
+        flag = True
     if file is None:
         return False
     return do_deploy(file)
