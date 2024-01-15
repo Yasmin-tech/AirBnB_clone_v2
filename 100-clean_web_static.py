@@ -12,6 +12,8 @@ env.sudo_user = "root"
 env.sudo_password = "12345sw48o"
 flag = False
 archives_to_delete_copy = []
+
+
 def do_clean(number=0):
     """Delete out-of-date archives.
 
@@ -34,13 +36,13 @@ def do_clean(number=0):
 
     for ar in archives_to_delete:
         local("rm versions/{}".format(ar))
-    
+
     if not flag:
-        archives_to_delete_copy = archives_to_delete.copy()  # create a copy of the list
-    
+        archives_to_delete_copy = archives_to_delete.copy()
+
     dir_server = run('ls /data/web_static/releases')
     dir_server = dir_server.split()
-    
+
     archives_to_delete_in_server = []
     for ar in archives_to_delete_copy:
         ar_in_server = ar.split(".")[0]
@@ -50,7 +52,8 @@ def do_clean(number=0):
     print("Directories on server:", dir_server)
     for i in range(len(dir_server)):
         if dir_server[i] in archives_to_delete_in_server:
-            run("sudo rm -rf /data/web_static/releases/{}".format(dir_server[i]))
+            run("sudo rm -rf /data/web_static/releases/{}"
+                .format(dir_server[i]))
         else:
             continue
     flag = True
