@@ -5,13 +5,13 @@ from fabric.api import run, env, put
 import os
 
 
-env.hosts = ['ubuntu@100.25.151.250', 'ubuntu@35.174.211.176']
+env.hosts = ['ubuntu@54.160.73.119', 'ubuntu@54.234.68.76']
 env.sudo_user = "root"
 env.sudo_password = "12345sw48o"
 
 
 def do_deploy(archive_path):
-    """ the function that will run remotly ont the servers
+    """ the function that will run remotly on the servers
         to deploy the archived files """
     if os.path.isfile(archive_path) is False:
         return False
@@ -37,7 +37,7 @@ def do_deploy(archive_path):
         return False
 
     if run("sudo mv {}web_static/* {}".format(
-            new_dir, new_dir)).failed is True:
+        new_dir, new_dir)).failed is True:
         return False
 
     if run("sudo rm -rf {}web_static".format(new_dir)).failed is True:
