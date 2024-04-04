@@ -7,7 +7,7 @@ from fabric.api import local, put, run, env
 import os
 from datetime import datetime
 
-env.hosts = ['ubuntu@100.25.151.250', 'ubuntu@35.174.211.176']
+env.hosts = ['ubuntu@54.234.68.76', 'ubuntu@54.160.73.119']
 env.sudo_user = "root"
 env.sudo_password = "12345sw48o"
 flag = False
@@ -83,7 +83,12 @@ def do_deploy(archive_path):
 
 def deploy():
     """" create the archive file from web_static by calling do_pack
-            deployto to the remote servers using do_deploy"""
+            deployto to the remote servers using do_deploy
+
+            file and flag are set globally so that we can create a new
+            archive file for server 1 and use the same file for server 2
+            instead of calling do_pack again
+            """
 
     global flag
     global file
