@@ -37,7 +37,7 @@ def do_deploy(archive_path):
         return False
 
     if run("sudo mv {}web_static/* {}".format(
-        new_dir, new_dir)).failed is True:
+            new_dir, new_dir)).failed is True:
         return False
 
     if run("sudo rm -rf {}web_static".format(new_dir)).failed is True:
