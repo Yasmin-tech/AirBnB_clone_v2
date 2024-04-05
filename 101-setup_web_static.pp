@@ -1,4 +1,4 @@
-# sets up your web servers for the deployment of web_static with puppet
+# set up your web servers for the deployment of web_static with puppet
 
 #ensure nginx is installed
 package { 'nginx':
