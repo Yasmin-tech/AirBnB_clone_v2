@@ -68,7 +68,7 @@ def python(text):
     return "Python {}".format(text)
 
 
-@app.route("/number/<int:n>")
+@app.route("/number/<int:n>", strict_slashes=False)
 def is_number(n):
     """/number/<n> routing rull display “n is a number”
     only if n is an integer"""
