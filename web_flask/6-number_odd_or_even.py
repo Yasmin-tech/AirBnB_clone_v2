@@ -12,6 +12,8 @@ and display <n> is even or odd only if n is a number
 from flask import Flask, redirect, url_for, render_template
 
 app = Flask(__name__)
+app.jinja_env.trim_blocks = True
+app.jinja_env.lstrip_blocks = True
 
 
 @app.route("/", strict_slashes=False)
