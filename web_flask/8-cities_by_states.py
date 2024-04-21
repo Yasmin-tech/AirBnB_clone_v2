@@ -46,7 +46,9 @@ def states_list():
         flag = True
     else:
         flag = False
-    return render_template("8-cities_by_states.html", state_objs=state_objs)
+    return render_template(
+        "8-cities_by_states.html", state_objs=state_objs, flag=flag
+        )
 
 
 @app.teardown_appcontext
